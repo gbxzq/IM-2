@@ -2,6 +2,9 @@
 #include <math.h>
 #include "../lib/random.h"
 
+#define MAX 8
+#define N 1000
+
 double array_sum(double *arr)
 {
     double sum = 0;
@@ -18,7 +21,7 @@ double calc_mathematical_expectation(double *values, double *probabilities)
 {
     double mathematical_expectation = 0;
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < MAX; i++)
     {
         mathematical_expectation += values[i] * probabilities[i];
     }
@@ -30,7 +33,7 @@ double calc_mathematical_expectation_pow(double *values, double *probabilities)
 {
     double mathematical_expectation = 0;
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < MAX; i++)
     {
         mathematical_expectation += values[i] * values[i] * probabilities[i];
     }
@@ -42,13 +45,13 @@ double *f(double *probabilities)
 {
     double *distr;
 
-    distr = malloc(sizeof(double) * (sizeof(probabilities) / sizeof(*probabilities)));
+    distr = malloc(sizeof(*probabilities) * MAX);
 
     distr[0] = probabilities[0];
 
     double sum = probabilities[0];
 
-    for (int i = 1; i < (sizeof(probabilities) / sizeof(*probabilities)) + 1; i++)
+    for (int i = 1; i < MAX + 1; i++)
     {
         sum += probabilities[i];
         distr[i] = sum;
@@ -62,11 +65,11 @@ int main()
     doseed();
     double X[] = {170, 180, 200, 230, 240, 250, 280, 300};
     double Y[] = {240, 200, 190, 180, 170, 160, 159, 140};
-    double P[8];
+    double P[MAX];
 
     double Y_sum = array_sum(Y);
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < MAX; i++)
     {
         P[i] = Y[i] / Y_sum;
     }
@@ -93,16 +96,22 @@ int main()
         }
     }
 
-    for (int i = 0; i < 8; i++)
+    printf("    |%-6s |%-6s |%-6s |%-5s|\n", "Vi", "Xi", "Yi", "Pi");
+    printf("-----------------------------------\n");
+    for (int i = 0; i < MAX; i++)
     {
-        printf("X%d ", i + 1);
-        printf("%lf ", P[i]);
+        printf("|X%d |", i + 1);
 
-        // printf("%i ", counters[i]);
-        // printf("%lf ", X[i]);
-        // printf("%lf ", Y[i]);
-        // printf("%lf \n", P[i]);
+        printf("%-3.4lf |", get_probability(counters[i], 1000));
+        printf("%-6.2lf |", X[i]);
+        printf("%-6.2lf |", Y[i]);
+        printf("%-3.2lf |\n", P[i]);
+        printf("-----------------------------------\n");
     }
+
+    printf("\nМатематичне очікуваня: %lf\n", mathematical_expectation);
+    printf("Математичне очікуваня в квадраті: %lf\n", mathematical_expectation_in_pow);
+    printf("Дисперсія: %lf", dispersion);
 
     return 0;
 }
